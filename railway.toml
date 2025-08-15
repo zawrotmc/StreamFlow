@@ -3,3 +3,6 @@ startCommand = "npm start"
 
 [build]
 buildCommand = "npm run build"
+
+[nixpacks]
+aptPkgs = ["ffmpeg"]

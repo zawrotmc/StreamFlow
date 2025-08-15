@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
-    "build": "vite build",
-    "start": "cross-env NODE_ENV=production tsx server/index.ts",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --target=node18 --define:import.meta.dirname=\"path.dirname(fileURLToPath(import.meta.url))\"",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push"
   },
