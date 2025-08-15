@@ -1,0 +1,32 @@
+🔗 WebSocket client connected from 127.0.0.1
+8:23:00 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"0d15d3b1-879a-416d-a0c8-7f…
+8:23:10 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"0d15d3b1-879a-416d-a0c8-7f…
+[NodeEvent on prePublish] id=[object Object] StreamPath=undefined args=undefined
+❌ Invalid StreamPath: undefined
+[NodeEvent on postPublish] id=[object Object] StreamPath=undefined args=undefined
+❌ Invalid StreamPath in postPublish: undefined
+[15.08.2025, 20:23:17] [INFO] RTMP session med5p7tlc324t3s2 ::1:60800 start push /live/sk_live_ddda35faabe34afcacbe
+C:\Users\xSzefit0x\Desktop\StreamFlow\server\services\rtmp-server.ts:56
+        const session = this.nms.getSession(id);
+                                 ^
+
+
+TypeError: this.nms.getSession is not a function
+    at EventEmitter.<anonymous> (C:\Users\xSzefit0x\Desktop\StreamFlow\server\services\rtmp-server.ts:56:34)
+    at EventEmitter.emit (node:events:507:28)
+    at BroadcastServer.postPublish (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\server\broadcast_server.js:149:26)
+    at Rtmp.onPush [as onPushCallback] (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\session\rtmp_session.js:77:32)
+    at Rtmp.onPublish (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:723:10)
+    at Rtmp.invokeHandler (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:675:12)
+    at Rtmp.packetHandler (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:629:19)
+    at Rtmp.chunkRead (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:559:16)
+    at Rtmp.parserData (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:346:21)
+    at Socket.onData (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\session\rtmp_session.js:109:25)
+    at Socket.emit (node:events:507:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+
+Node.js v23.11.0
+PS C:\Users\xSzefit0x\Desktop\StreamFlow>

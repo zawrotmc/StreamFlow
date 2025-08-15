@@ -1,0 +1,61 @@
+PS C:\Users\xSzefit0x\Desktop\StreamFlow> npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+[15.08.2025, 20:26:28] [INFO] Node-Media-Server v4.0.21
+[15.08.2025, 20:26:28] [INFO] Homepage: https://github.com/illuspas/Node-Media-Server
+[15.08.2025, 20:26:28] [INFO] License: Apache-2.0
+[15.08.2025, 20:26:28] [INFO] Author: Chen Mingliang
+[dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+[dotenv@17.2.1] injecting env (0) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+✅ RTMP Server started on port 1935
+✅ RTMP server started on port 1935
+[15.08.2025, 20:26:28] [INFO] HTTP server listening on port undefined:8888
+[15.08.2025, 20:26:28] [INFO] Rtmp Server listening on port undefined:1935
+8:26:28 PM [express] 🚀 Server running on port 5000
+8:26:28 PM [express] 🎥 RTMP URL: rtmp://localhost:1935/live
+8:26:28 PM [express] 📺 Admin panel: http://localhost:5000/admin
+🔗 WebSocket client connected from 127.0.0.1
+🔗 WebSocket client connected from 127.0.0.1
+8:26:29 PM [express] GET /api/admin/stream 401 in 5ms :: {"message":"Not authenticated"}
+🔌 WebSocket client disconnected: 1001
+🔌 WebSocket client disconnected: 1001
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+8:26:38 PM [express] GET /api/admin/auth 401 in 2ms :: {"message":"Not authenticated"}
+Login attempt - received password: 123
+Login attempt - password type: string
+Expected password: 123
+✅ Login successful for session: 0b103b76-f7a8-4812-aafc-5dbffc474b8a
+8:26:41 PM [express] POST /api/admin/login 200 in 12ms :: {"message":"Authentication successful"}
+8:26:41 PM [express] GET /api/admin/stream 200 in 2ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+🔗 WebSocket client connected from 127.0.0.1
+8:26:42 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+8:26:52 PM [express] GET /api/admin/stream 304 in 0ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+[NodeEvent on prePublish] id=[object Object] StreamPath=undefined args=undefined
+❌ Invalid StreamPath: undefined
+[NodeEvent on postPublish] id=[object Object] StreamPath=undefined args=undefined
+❌ Invalid StreamPath in postPublish: undefined
+[15.08.2025, 20:26:55] [INFO] RTMP session med5tvossp30sys6 ::1:61008 start push /live/sk_live_1d4317c26be04b35a1dd
+8:27:02 PM [express] GET /api/admin/stream 304 in 0ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+8:27:06 PM [express] GET /api/stream/status 304 in 1ms :: {"isLive":false,"viewerCount":0,"title":"L…
+🔗 WebSocket client connected from 127.0.0.1
+🔌 WebSocket client disconnected: 1001
+🔌 WebSocket client disconnected: 1001
+8:27:09 PM [express] GET /api/admin/auth 200 in 2ms :: {"message":"Authenticated"}
+8:27:10 PM [express] GET /api/admin/stream 304 in 2ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+🔗 WebSocket client connected from 127.0.0.1
+8:27:10 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+8:27:20 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+8:27:30 PM [express] GET /api/admin/stream 304 in 0ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+🔌 WebSocket client disconnected: 1001
+8:27:30 PM [express] GET /api/admin/auth 304 in 1ms :: {"message":"Authenticated"}
+8:27:31 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+🔗 WebSocket client connected from 127.0.0.1
+8:27:31 PM [express] GET /api/admin/stream 304 in 0ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…
+[15.08.2025, 20:27:51] [INFO] RTMP session med5tvossp30sys6 close
+[NodeEvent on donePublish] id=[object Object] StreamPath=undefined args=undefined
+❌ Invalid StreamPath in donePublish: undefined
+8:29:04 PM [express] GET /api/admin/stream 304 in 2ms :: {"stream":{"id":"58ff9320-36ef-4ab7-8d65-9b…

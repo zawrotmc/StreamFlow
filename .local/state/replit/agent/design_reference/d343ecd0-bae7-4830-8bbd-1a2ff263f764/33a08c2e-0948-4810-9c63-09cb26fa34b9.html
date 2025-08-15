@@ -1,0 +1,426 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Live Streaming Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-primary': '#0F0F23',
+                        'dark-secondary': '#1A1A2E',
+                        'accent-red': '#FF6B6B',
+                        'accent-green': '#4ECDC4',
+                        'text-primary': '#E94560',
+                        'text-secondary': '#A0A0A0'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'mono': ['Monaco', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-dark-primary text-white font-inter overflow-hidden">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="h-screen flex flex-col">
+        <!-- Navigation Header -->
+        <!-- @COMPONENT: Header -->
+        <header class="bg-dark-secondary border-b border-gray-700 px-6 py-4 flex items-center justify-between relative z-20">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-video text-accent-red text-2xl"></i>
+                    <h1 class="text-xl font-bold text-white">StreamCast</h1>
+                </div>
+                <div class="flex items-center space-x-2 bg-dark-primary px-3 py-2 rounded-lg">
+                    <div class="w-3 h-3 rounded-full bg-accent-green animate-pulse" data-bind="streamStatus.isLive"></div>
+                    <span class="text-sm font-medium" data-bind="streamStatus.text">LIVE</span>
+                    <span class="text-xs text-text-secondary" data-bind="streamStats.viewers">1,247 viewers</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Stream Quality Indicator -->
+                <div class="flex items-center space-x-2 bg-dark-primary px-3 py-2 rounded-lg">
+                    <i class="fas fa-signal text-accent-green text-sm"></i>
+                    <span class="text-sm" data-bind="streamQuality.resolution">1080p</span>
+                    <span class="text-xs text-text-secondary" data-bind="streamQuality.bitrate">6000kbps</span>
+                </div>
+                
+                <!-- Settings Toggle -->
+                <button class="p-2 hover:bg-dark-primary rounded-lg transition-colors" data-event="click:toggleSettings">
+                    <i class="fas fa-cog text-lg"></i>
+                </button>
+            </div>
+        </header>
+        <!-- @END_COMPONENT: Header -->
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex relative">
+            <!-- Video Player Container -->
+            <!-- @COMPONENT: VideoPlayer -->
+            <div class="flex-1 relative bg-black">
+                <!-- Full Screen Video Player -->
+                <video id="live-stream-player" 
+                       class="video-js vjs-default-skin w-full h-full object-cover"
+                       controls
+                       preload="auto"
+                       data-setup="{}"
+                       data-implementation="Video.js player with HLS.js for live stream playback">
+                    <source src="https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" type="application/x-mpegURL" data-mock="true">
+                    <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a web browser that
+                        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>.
+                    </p>
+                </video>
+
+                <!-- Stream Overlay Controls -->
+                <div class="absolute top-4 right-4 flex flex-col space-y-2 z-10">
+                    <!-- Fullscreen Toggle -->
+                    <button class="bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-3 rounded-lg transition-all" data-event="click:toggleFullscreen">
+                        <i class="fas fa-expand text-lg"></i>
+                    </button>
+                    
+                    <!-- Volume Control -->
+                    <button class="bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-3 rounded-lg transition-all" data-event="click:toggleMute">
+                        <i class="fas fa-volume-up text-lg" data-bind="volumeIcon"></i>
+                    </button>
+                </div>
+
+                <!-- Stream Status Overlay -->
+                <div class="absolute bottom-4 left-4 flex items-center space-x-4 z-10">
+                    <div class="bg-black bg-opacity-70 px-4 py-2 rounded-lg flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                        <span class="text-sm font-medium">LIVE</span>
+                    </div>
+                    <div class="bg-black bg-opacity-70 px-4 py-2 rounded-lg">
+                        <span class="text-sm" data-bind="streamDuration">02:34:12</span>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="absolute inset-0 bg-dark-primary flex items-center justify-center" style="display: none;" data-state="loading">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-accent-red mx-auto mb-4"></div>
+                        <p class="text-text-secondary">Connecting to stream...</p>
+                    </div>
+                </div>
+
+                <!-- Offline State -->
+                <div class="absolute inset-0 bg-dark-primary flex items-center justify-center" style="display: none;" data-state="offline">
+                    <div class="text-center">
+                        <i class="fas fa-video-slash text-6xl text-text-secondary mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Stream Offline</h3>
+                        <p class="text-text-secondary">Start streaming from OBS to go live</p>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: VideoPlayer -->
+
+            <!-- Settings Sidebar -->
+            <!-- @COMPONENT: SettingsSidebar -->
+            <div class="w-80 bg-dark-secondary border-l border-gray-700 transform translate-x-full transition-transform duration-300 ease-in-out absolute right-0 top-0 h-full z-30" id="settings-sidebar">
+                <div class="p-6 border-b border-gray-700 flex items-center justify-between">
+                    <h2 class="text-lg font-semibold">Stream Settings</h2>
+                    <button class="p-2 hover:bg-dark-primary rounded-lg transition-colors" data-event="click:closeSettings">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-6 overflow-y-auto h-full">
+                    <!-- Stream Key Section -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-text-secondary uppercase tracking-wide">Stream Configuration</h3>
+                        
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Stream Key</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" 
+                                       value="sk_live_abc123def456ghi789" 
+                                       class="flex-1 bg-dark-primary border border-gray-600 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-accent-red"
+                                       readonly
+                                       data-bind="streamKey"
+                                       data-mock="true">
+                                <button class="bg-accent-red hover:bg-red-600 px-3 py-2 rounded-lg text-sm transition-colors" data-event="click:copyStreamKey">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">RTMP URL</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" 
+                                       value="rtmp://localhost:1935/live" 
+                                       class="flex-1 bg-dark-primary border border-gray-600 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-accent-red"
+                                       readonly
+                                       data-bind="rtmpUrl"
+                                       data-mock="true">
+                                <button class="bg-accent-red hover:bg-red-600 px-3 py-2 rounded-lg text-sm transition-colors" data-event="click:copyRtmpUrl">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-accent-green hover:bg-teal-600 text-dark-primary font-semibold py-2 px-4 rounded-lg transition-colors" data-event="click:regenerateKey">
+                            <i class="fas fa-refresh mr-2"></i>
+                            Generate New Key
+                        </button>
+                    </div>
+
+                    <!-- Stream Statistics -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-text-secondary uppercase tracking-wide">Stream Statistics</h3>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-dark-primary p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-accent-green" data-bind="stats.viewers">1,247</div>
+                                <div class="text-xs text-text-secondary">Viewers</div>
+                            </div>
+                            <div class="bg-dark-primary p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-white" data-bind="stats.duration">2:34:12</div>
+                                <div class="text-xs text-text-secondary">Duration</div>
+                            </div>
+                            <div class="bg-dark-primary p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-white" data-bind="stats.bitrate">6.2</div>
+                                <div class="text-xs text-text-secondary">Mbps</div>
+                            </div>
+                            <div class="bg-dark-primary p-3 rounded-lg">
+                                <div class="text-2xl font-bold text-white" data-bind="stats.fps">60</div>
+                                <div class="text-xs text-text-secondary">FPS</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stream Quality Settings -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-text-secondary uppercase tracking-wide">Quality Settings</h3>
+                        
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Resolution</label>
+                            <select class="w-full bg-dark-primary border border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent-red" data-bind="qualitySettings.resolution">
+                                <option value="1080p" selected data-mock="true">1080p (1920x1080)</option>
+                                <option value="720p" data-mock="true">720p (1280x720)</option>
+                                <option value="480p" data-mock="true">480p (854x480)</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">Bitrate</label>
+                            <input type="range" 
+                                   min="1000" 
+                                   max="8000" 
+                                   value="6000" 
+                                   class="w-full accent-accent-red"
+                                   data-bind="qualitySettings.bitrate">
+                            <div class="flex justify-between text-xs text-text-secondary">
+                                <span>1 Mbps</span>
+                                <span data-bind="qualitySettings.bitrateDisplay">6 Mbps</span>
+                                <span>8 Mbps</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stream Controls -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-text-secondary uppercase tracking-wide">Stream Controls</h3>
+                        
+                        <div class="flex space-x-2">
+                            <button class="flex-1 bg-red-600 hover:bg-red-700 font-semibold py-2 px-4 rounded-lg transition-colors" data-event="click:stopStream">
+                                <i class="fas fa-stop mr-2"></i>
+                                Stop Stream
+                            </button>
+                            <button class="flex-1 bg-gray-600 hover:bg-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors" data-event="click:restartStream">
+                                <i class="fas fa-redo mr-2"></i>
+                                Restart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Connection Status -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-text-secondary uppercase tracking-wide">Connection Status</h3>
+                        
+                        <div class="bg-dark-primary p-4 rounded-lg space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">RTMP Server</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 rounded-full bg-accent-green"></div>
+                                    <span class="text-sm text-accent-green">Connected</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">OBS Connection</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 rounded-full bg-accent-green"></div>
+                                    <span class="text-sm text-accent-green">Active</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm">Stream Health</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 rounded-full bg-accent-green"></div>
+                                    <span class="text-sm text-accent-green">Excellent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: SettingsSidebar -->
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <!-- Notification Toast -->
+    <!-- @COMPONENT: NotificationToast -->
+    <div id="notification-toast" class="fixed bottom-4 right-4 bg-dark-secondary border border-gray-600 rounded-lg p-4 shadow-lg z-50 transform translate-y-full transition-transform duration-300" style="display: none;">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-check-circle text-accent-green"></i>
+            <span class="text-sm" data-bind="notification.message">Stream key copied to clipboard</span>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: NotificationToast -->
+
+    <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+    <script>
+        // TODO: Implement RTMP server integration, HLS stream conversion, and real-time stream management
+        (function() {
+            // Initialize Video.js player
+            const player = videojs('live-stream-player', {
+                fluid: true,
+                responsive: true,
+                liveui: true,
+                controls: true,
+                preload: 'auto'
+            });
+
+            // Settings sidebar toggle
+            const settingsButton = document.querySelector('[data-event="click:toggleSettings"]');
+            const closeButton = document.querySelector('[data-event="click:closeSettings"]');
+            const sidebar = document.getElementById('settings-sidebar');
+
+            settingsButton?.addEventListener('click', function() {
+                sidebar.classList.remove('translate-x-full');
+            });
+
+            closeButton?.addEventListener('click', function() {
+                sidebar.classList.add('translate-x-full');
+            });
+
+            // Copy to clipboard functionality
+            function copyToClipboard(text, message) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showNotification(message);
+                });
+            }
+
+            document.querySelector('[data-event="click:copyStreamKey"]')?.addEventListener('click', function() {
+                const streamKey = document.querySelector('[data-bind="streamKey"]').value;
+                copyToClipboard(streamKey, 'Stream key copied to clipboard');
+            });
+
+            document.querySelector('[data-event="click:copyRtmpUrl"]')?.addEventListener('click', function() {
+                const rtmpUrl = document.querySelector('[data-bind="rtmpUrl"]').value;
+                copyToClipboard(rtmpUrl, 'RTMP URL copied to clipboard');
+            });
+
+            // Notification system
+            function showNotification(message) {
+                const toast = document.getElementById('notification-toast');
+                const messageEl = document.querySelector('[data-bind="notification.message"]');
+                
+                messageEl.textContent = message;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-full');
+                }, 100);
+                
+                setTimeout(() => {
+                    toast.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+
+            // Bitrate slider update
+            const bitrateSlider = document.querySelector('[data-bind="qualitySettings.bitrate"]');
+            const bitrateDisplay = document.querySelector('[data-bind="qualitySettings.bitrateDisplay"]');
+            
+            bitrateSlider?.addEventListener('input', function() {
+                const value = Math.round(this.value / 1000);
+                bitrateDisplay.textContent = `${value} Mbps`;
+            });
+
+            // Fullscreen functionality
+            document.querySelector('[data-event="click:toggleFullscreen"]')?.addEventListener('click', function() {
+                if (player.isFullscreen()) {
+                    player.exitFullscreen();
+                } else {
+                    player.requestFullscreen();
+                }
+            });
+
+            // Volume toggle
+            document.querySelector('[data-event="click:toggleMute"]')?.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (player.muted()) {
+                    player.muted(false);
+                    icon.className = 'fas fa-volume-up text-lg';
+                } else {
+                    player.muted(true);
+                    icon.className = 'fas fa-volume-mute text-lg';
+                }
+            });
+
+            // Stream control buttons
+            document.querySelector('[data-event="click:stopStream"]')?.addEventListener('click', function() {
+                showNotification('Stream stopped');
+                // TODO: Implement actual stream stop functionality
+            });
+
+            document.querySelector('[data-event="click:restartStream"]')?.addEventListener('click', function() {
+                showNotification('Stream restarting...');
+                // TODO: Implement actual stream restart functionality
+            });
+
+            document.querySelector('[data-event="click:regenerateKey"]')?.addEventListener('click', function() {
+                // Generate new mock stream key
+                const newKey = 'sk_live_' + Math.random().toString(36).substring(2, 15);
+                document.querySelector('[data-bind="streamKey"]').value = newKey;
+                showNotification('New stream key generated');
+            });
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!sidebar.contains(event.target) && !settingsButton.contains(event.target)) {
+                    sidebar.classList.add('translate-x-full');
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    sidebar.classList.add('translate-x-full');
+                }
+                if (event.key === 'f' || event.key === 'F') {
+                    event.preventDefault();
+                    if (player.isFullscreen()) {
+                        player.exitFullscreen();
+                    } else {
+                        player.requestFullscreen();
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

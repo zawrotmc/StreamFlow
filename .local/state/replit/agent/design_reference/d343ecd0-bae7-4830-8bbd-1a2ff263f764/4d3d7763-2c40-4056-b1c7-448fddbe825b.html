@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Streaming Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    'inter': ['Inter', 'sans-serif'],
+                },
+                colors: {
+                    'dark-navy': '#0F0F23',
+                    'dark-purple': '#1A1A2E',
+                    'blue-gray': '#16213E',
+                    'success': '#10B981',
+                    'error': '#EF4444',
+                }
+            }
+        }
+    };
+    </script>
+</head>
+<body class="font-inter bg-dark-navy text-gray-100 m-0 p-0 overflow-hidden">
+
+    <!-- Main Streaming Interface -->
+    <div id="streamingPage" class="relative w-screen h-screen">
+        <!-- @COMPONENT: StreamPlayer [stream URL, status] -->
+        <div class="absolute inset-0 bg-black">
+            <!-- Full-screen video player container -->
+            <video 
+                id="streamPlayer" 
+                class="video-js vjs-default-skin w-full h-full" 
+                controls 
+                preload="auto" 
+                data-setup='{"fluid": true, "responsive": true}'
+                data-mock="true"
+                data-bind="streamUrl"
+                data-implementation="Connect to HLS stream from Node Media Server">
+                <!-- Placeholder for no stream -->
+                <div class="flex items-center justify-center w-full h-full bg-gray-900">
+                    <div class="text-center">
+                        <i class="fas fa-video-slash text-6xl text-gray-400 mb-4"></i>
+                        <h2 class="text-2xl font-semibold text-gray-300 mb-2">No Stream Active</h2>
+                        <p class="text-gray-400">Start streaming from OBS to begin</p>
+                    </div>
+                </div>
+            </video>
+        </div>
+        <!-- @END_COMPONENT: StreamPlayer -->
+
+        <!-- @COMPONENT: StreamControls [isLive, viewerCount] -->
+        <!-- Floating Stream Status Indicator -->
+        <div class="absolute top-6 left-6 z-50">
+            <div class="flex items-center space-x-3">
+                <!-- Live Status Badge -->
+                <div id="liveStatus" class="flex items-center bg-black bg-opacity-60 backdrop-blur-sm rounded-full px-4 py-2" data-mock="true">
+                    <div class="w-3 h-3 bg-success rounded-full mr-2 animate-pulse" data-bind="isLive ? 'bg-success animate-pulse' : 'bg-gray-400'"></div>
+                    <span class="text-sm font-medium" data-bind="isLive ? 'LIVE' : 'OFFLINE'">LIVE</span>
+                </div>
+                
+                <!-- Viewer Count (when live) -->
+                <div class="bg-black bg-opacity-60 backdrop-blur-sm rounded-full px-4 py-2" data-mock="true">
+                    <i class="fas fa-eye text-gray-300 mr-2"></i>
+                    <span class="text-sm font-medium" data-bind="viewerCount">247</span>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: StreamControls -->
+
+        <!-- @COMPONENT: SettingsButton -->
+        <!-- Settings Button (Top Right) -->
+        <div class="absolute top-6 right-6 z-50">
+            <button 
+                id="settingsBtn" 
+                class="bg-black bg-opacity-60 backdrop-blur-sm hover:bg-opacity-80 transition-all duration-200 rounded-full p-3"
+                data-event="click:navigateToAdmin"
+                data-implementation="Navigate to /admin route">
+                <i class="fas fa-cog text-xl text-gray-300 hover:text-white"></i>
+            </button>
+        </div>
+        <!-- @END_COMPONENT: SettingsButton -->
+
+        <!-- Stream Quality Indicator -->
+        <div class="absolute bottom-6 right-6 z-50">
+            <div class="bg-black bg-opacity-60 backdrop-blur-sm rounded-lg px-3 py-2" data-mock="true">
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-success rounded-full" data-bind="connectionQuality === 'good' ? 'bg-success' : 'bg-error'"></div>
+                    <span class="text-xs font-medium text-gray-300" data-bind="streamQuality">1080p</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Page -->
+    <div id="adminLoginPage" class="hidden fixed inset-0 bg-dark-navy flex items-center justify-center z-50">
+        <!-- @COMPONENT: AdminLogin [onSubmit] -->
+        <div class="bg-dark-purple rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
+            <div class="text-center mb-8">
+                <div class="bg-blue-gray rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-2xl text-blue-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Admin Access</h2>
+                <p class="text-gray-400">Enter password to access dashboard</p>
+            </div>
+
+            <form data-event="submit:handleAdminLogin" data-implementation="Validate against ADMIN_PASSWORD env variable">
+                <div class="mb-6">
+                    <label for="adminPassword" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="adminPassword" 
+                            name="password"
+                            class="w-full bg-blue-gray border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                            placeholder="Enter admin password"
+                            data-bind="password"
+                            data-mock="true"
+                            required>
+                        <i class="fas fa-lock absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-dark-purple">
+                    Access Dashboard
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button 
+                    id="backToStreamBtn"
+                    class="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+                    data-event="click:backToStream">
+                    ← Back to Stream
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AdminLogin -->
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden fixed inset-0 bg-dark-navy overflow-y-auto">
+        <!-- @COMPONENT: AdminDashboard [streamKey, connectionInfo, isAuthenticated] -->
+        <div class="min-h-screen p-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Stream Dashboard</h1>
+                    <p class="text-gray-400">Manage your streaming configuration</p>
+                </div>
+                <button 
+                    id="logoutBtn"
+                    class="bg-error hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                    data-event="click:handleLogout"
+                    data-implementation="Clear session and redirect">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Stream Configuration -->
+                <div class="bg-dark-purple rounded-xl p-6">
+                    <h2 class="text-xl font-semibold text-white mb-4">
+                        <i class="fas fa-stream mr-2 text-blue-400"></i>Stream Configuration
+                    </h2>
+                    
+                    <!-- Stream Key -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Stream Key</label>
+                        <div class="flex items-center space-x-2">
+                            <input 
+                                type="text" 
+                                class="flex-1 bg-blue-gray border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value="sk_live_abc123def456ghi789"
+                                data-bind="streamKey"
+                                data-mock="true"
+                                readonly>
+                            <button 
+                                class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors duration-200"
+                                data-event="click:copyStreamKey"
+                                data-implementation="Copy stream key to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button 
+                                class="bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded-lg transition-colors duration-200"
+                                data-event="click:regenerateStreamKey"
+                                data-implementation="Generate new stream key">
+                                <i class="fas fa-refresh"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RTMP URL -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">RTMP URL</label>
+                        <div class="flex items-center space-x-2">
+                            <input 
+                                type="text" 
+                                class="flex-1 bg-blue-gray border border-gray-600 rounded-lg px-4 py-2 text-white font-mono text-sm"
+                                value="rtmp://localhost:1935/live"
+                                data-bind="rtmpUrl"
+                                data-mock="true"
+                                readonly>
+                            <button 
+                                class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors duration-200"
+                                data-event="click:copyRtmpUrl">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- OBS Setup Instructions -->
+                    <div class="bg-blue-gray rounded-lg p-4">
+                        <h3 class="font-semibold text-white mb-2">OBS Setup</h3>
+                        <ol class="text-sm text-gray-300 space-y-1">
+                            <li>1. Open OBS Studio</li>
+                            <li>2. Go to Settings → Stream</li>
+                            <li>3. Set Service to "Custom"</li>
+                            <li>4. Copy RTMP URL above to Server field</li>
+                            <li>5. Copy Stream Key above to Stream Key field</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Stream Status -->
+                <div class="bg-dark-purple rounded-xl p-6">
+                    <h2 class="text-xl font-semibold text-white mb-4">
+                        <i class="fas fa-chart-line mr-2 text-green-400"></i>Stream Status
+                    </h2>
+
+                    <!-- Connection Status -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-blue-gray rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-300 text-sm">Status</span>
+                                <div class="flex items-center" data-bind="streamStatus" data-mock="true">
+                                    <div class="w-2 h-2 bg-success rounded-full mr-2 animate-pulse"></div>
+                                    <span class="text-success font-semibold">Live</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-gray rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-300 text-sm">Viewers</span>
+                                <span class="text-white font-semibold" data-bind="viewerCount" data-mock="true">247</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stream Quality Metrics -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300">Bitrate</span>
+                            <span class="text-white" data-bind="bitrate" data-mock="true">2.5 Mbps</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300">Resolution</span>
+                            <span class="text-white" data-bind="resolution" data-mock="true">1920x1080</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300">FPS</span>
+                            <span class="text-white" data-bind="fps" data-mock="true">60</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300">Uptime</span>
+                            <span class="text-white" data-bind="uptime" data-mock="true">2h 34m</span>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="flex space-x-3 mt-6">
+                        <button 
+                            class="flex-1 bg-error hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+                            data-event="click:disconnectStream"
+                            data-implementation="Force disconnect current stream">
+                            <i class="fas fa-stop mr-2"></i>Stop Stream
+                        </button>
+                        <button 
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+                            data-event="click:viewStream"
+                            data-implementation="Navigate back to main stream view">
+                            <i class="fas fa-eye mr-2"></i>View Stream
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Log -->
+            <div class="mt-6 bg-dark-purple rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">
+                    <i class="fas fa-list mr-2 text-purple-400"></i>Connection Log
+                </h2>
+                <div class="bg-blue-gray rounded-lg p-4 font-mono text-sm max-h-64 overflow-y-auto" data-mock="true">
+                    <!-- @MAP: connectionLogs.map(log => ( -->
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-gray-400">2024-01-15 14:32:45</span>
+                        <span class="text-success">INFO</span>
+                        <span class="text-gray-300">Stream connected from IP: 192.168.1.100</span>
+                    </div>
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-gray-400">2024-01-15 14:30:12</span>
+                        <span class="text-blue-400">DEBUG</span>
+                        <span class="text-gray-300">RTMP handshake completed</span>
+                    </div>
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-gray-400">2024-01-15 14:29:58</span>
+                        <span class="text-yellow-400">WARN</span>
+                        <span class="text-gray-300">Previous stream disconnected</span>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AdminDashboard -->
+    </div>
+
+    <script>
+        // TODO: Implement business logic, API calls, or state management
+        (function() {
+            // Mock page navigation
+            const streamingPage = document.getElementById('streamingPage');
+            const adminLoginPage = document.getElementById('adminLoginPage');
+            const adminDashboard = document.getElementById('adminDashboard');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const backToStreamBtn = document.getElementById('backToStreamBtn');
+
+            // Show admin login when settings clicked
+            settingsBtn?.addEventListener('click', () => {
+                streamingPage.classList.add('hidden');
+                adminLoginPage.classList.remove('hidden');
+            });
+
+            // Go back to stream
+            backToStreamBtn?.addEventListener('click', () => {
+                adminLoginPage.classList.add('hidden');
+                streamingPage.classList.remove('hidden');
+            });
+
+            // Mock admin login (in real app, validate against ADMIN_PASSWORD)
+            document.querySelector('form')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                adminLoginPage.classList.add('hidden');
+                adminDashboard.classList.remove('hidden');
+            });
+
+            // Mock logout
+            document.getElementById('logoutBtn')?.addEventListener('click', () => {
+                adminDashboard.classList.add('hidden');
+                streamingPage.classList.remove('hidden');
+            });
+
+            // Initialize Video.js player
+            if (document.getElementById('streamPlayer')) {
+                const player = videojs('streamPlayer', {
+                    fluid: true,
+                    responsive: true,
+                    controls: true,
+                    preload: 'auto'
+                });
+
+                // TODO: Connect to HLS stream from Node Media Server
+                // player.src({
+                //     type: 'application/x-mpegURL',
+                //     src: 'http://localhost:8000/live/STREAM_KEY/index.m3u8'
+                // });
+            }
+
+            // Mock copy functionality
+            document.querySelectorAll('[data-event*="copy"]').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const input = e.target.closest('div').querySelector('input');
+                    if (input) {
+                        try {
+                            await navigator.clipboard.writeText(input.value);
+                            // TODO: Show toast notification
+                            console.log('Copied to clipboard:', input.value);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    }
+                });
+            });
+
+            // Mock stream key regeneration
+            document.querySelector('[data-event*="regenerateStreamKey"]')?.addEventListener('click', () => {
+                const streamKeyInput = document.querySelector('[data-bind="streamKey"]');
+                if (streamKeyInput) {
+                    // TODO: Generate actual stream key via API
+                    streamKeyInput.value = 'sk_live_' + Math.random().toString(36).substr(2, 18);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

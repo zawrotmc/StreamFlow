@@ -1,0 +1,30 @@
+7:59:55 PM [express] GET /api/admin/stream 304 in 2ms :: {"stream":{"id":"e6e3332b-d845-4303-a626-3e…
+8:00:05 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"e6e3332b-d845-4303-a626-3e…
+8:00:15 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"e6e3332b-d845-4303-a626-3e…
+8:00:25 PM [express] GET /api/admin/stream 304 in 1ms :: {"stream":{"id":"e6e3332b-d845-4303-a626-3e…
+[NodeEvent on prePublish] id=[object Object] StreamPath=undefined args=undefined
+[NodeEvent on postPublish] id=[object Object] StreamPath=undefined args=undefined
+[15.08.2025, 20:00:29] [INFO] RTMP session med4vw6xd84z4mdy ::1:60110 start push /live/sk_live_0ebd03f719874c9f8948
+C:\Users\xSzefit0x\Desktop\StreamFlow\server\services\rtmp-server.ts:54
+      const streamKey = StreamPath.split('/')[2];
+                                   ^
+
+
+TypeError: Cannot read properties of undefined (reading 'split')
+    at EventEmitter.<anonymous> (C:\Users\xSzefit0x\Desktop\StreamFlow\server\services\rtmp-server.ts:54:36)
+    at EventEmitter.emit (node:events:507:28)
+    at BroadcastServer.postPublish (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\server\broadcast_server.js:149:26)
+    at Rtmp.onPush [as onPushCallback] (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\session\rtmp_session.js:77:32)
+    at Rtmp.onPublish (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:723:10)
+    at Rtmp.invokeHandler (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:675:12)
+    at Rtmp.packetHandler (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:629:19)
+    at Rtmp.chunkRead (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:559:16)
+    at Rtmp.parserData (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\protocol\rtmp.js:346:21)
+    at Socket.onData (C:\Users\xSzefit0x\Desktop\StreamFlow\node_modules\node-media-server\src\session\rtmp_session.js:109:25)
+    at Socket.emit (node:events:507:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+
+Node.js v23.11.0

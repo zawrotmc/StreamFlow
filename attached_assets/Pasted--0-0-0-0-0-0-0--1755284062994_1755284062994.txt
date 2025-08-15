@@ -1,0 +1,119 @@
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "parserPreviousBytes": 0
+    },
+    "connectCmdObj": {
+      "app": "live",
+      "type": "nonprivate",
+      "flashVer": "FMLE/3.0 (compatible; FMSc/1.0)",
+      "swfUrl": "rtmp://localhost:1935/live",
+      "tcUrl": "rtmp://localhost:1935/live"
+    },
+    "streamApp": "live",
+    "streamHost": "localhost",
+    "objectEncoding": 0,
+    "connectTime": "2025-08-15T18:52:16.395Z",
+    "startTimestamp": 1755283936395,
+    "streamName": "sk_live_71cc120a8a8949bcb271",
+    "streamQuery": {},
+    "streamId": 1
+  },
+  "broadcast": {
+    "publisher": null,
+    "subscribers": {},
+    "flvHeader": {
+      "type": "Buffer",
+      "data": [
+        70,
+        76,
+        86,
+        1,
+        5,
+        0,
+        0,
+        0,
+        9,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "flvMetaData": null,
+    "flvAudioHeader": null,
+    "flvVideoHeader": null,
+    "rtmpMetaData": null,
+    "rtmpAudioHeader": null,
+    "rtmpVideoHeader": null,
+    "flvGopCache": null,
+    "rtmpGopCache": null
+  }
+}
+🔍 Analyzing id object in postPublish: [
+  'sendBuffer',     'close',           'id',
+  'ip',             'protocol',        'streamHost',
+  'streamApp',      'streamName',      'streamPath',
+  'streamQuery',    'createTime',      'endTime',
+  'videoCodec',     'videoWidth',      'videoHeight',
+  'videoFramerate', 'videoDatarate',   'audioCodec',
+  'audioChannels',  'audioSamplerate', 'audioDatarate',
+  'inBytes',        'outBytes',        'filePath',
+  'run',            'onConnect',       'onPlay',
+  'onPush',         'onOutput',        'onPacket',
+  'onData',         'onClose',         'onError',
+  'socket',         'rtmp',            'broadcast'
+]
+🔍 Extracted in postPublish - sessionId: med6qhe1ty8qmy6x actualStreamPath: /live/sk_live_71cc120a8a8949bcb271
+[15.08.2025, 20:52:17] [INFO] RTMP session med6qhe1ty8qmy6x ::1:61997 start push /live/sk_live_71cc120a8a8949bcb271
+✅ Valid stream key, allowing connection
+✅ Stream is now live!
+8:52:17 PM [express] GET /api/admin/stream 200 in 1ms :: {"stream":{"id":"b66afdf6-2223-4dba-a164-fa…
+8:52:22 PM [express] GET /api/stream/status 200 in 3ms :: {"isLive":true,"viewerCount":0,"title":"Li…
+Stream endpoint error: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'node-fetch' imported from C:\Users\xSzefit0x\Desktop\StreamFlow\server\routes.ts
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:267:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:854:18)
+    at defaultResolve (node:internal/modules/esm/resolve:984:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///C:/Users/xSzefit0x/Desktop/StreamFlow/node_modules/tsx/dist/esm/index.mjs?1755283911590:2:3212)
+    at resolveDirectory (file:///C:/Users/xSzefit0x/Desktop/StreamFlow/node_modules/tsx/dist/esm/index.mjs?1755283911590:2:3584)
+    at resolveTsPaths (file:///C:/Users/xSzefit0x/Desktop/StreamFlow/node_modules/tsx/dist/esm/index.mjs?1755283911590:2:4073)
+    at async resolve (file:///C:/Users/xSzefit0x/Desktop/StreamFlow/node_modules/tsx/dist/esm/index.mjs?1755283911590:2:4441)
+    at async nextResolve (node:internal/modules/esm/hooks:748:22) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+8:52:22 PM [express] GET /api/stream/live/sk_live_71cc120a8a8949bcb271 500 in 10ms :: {"message":"Fa…
+8:52:22 PM [express] GET /api/admin/stream 200 in 1ms :: {"stream":{"id":"b66afdf6-2223-4dba-a164-fa…
+🔗 WebSocket client connected from 127.0.0.1
+8:52:27 PM [express] GET /api/stream/status 200 in 1ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+8:52:32 PM [express] GET /api/stream/status 304 in 1ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+8:52:37 PM [express] GET /api/stream/status 304 in 0ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+8:52:42 PM [express] GET /api/stream/status 304 in 1ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+8:52:47 PM [express] GET /api/stream/status 304 in 1ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+8:52:52 PM [express] GET /api/stream/status 304 in 2ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+8:52:57 PM [express] GET /api/stream/status 304 in 1ms :: {"isLive":true,"viewerCount":1,"title":"Li…
+🔌 WebSocket client disconnected: 1001
